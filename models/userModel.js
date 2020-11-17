@@ -48,7 +48,6 @@ userSchema.virtual('pass')
   this._pass = pass;
   this.password = bcrypt.hashSync(pass, 8);
 });
-// .get(function(){ this._pass });
 
 userSchema.methods.comparePassword =  function( reqPassword, userPassword ) {
     let res = bcrypt.compareSync(reqPassword, userPassword);
