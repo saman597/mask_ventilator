@@ -39,15 +39,14 @@ exports.signUp = async (req, res) => {
         const user= User({
             fullName,
             email,
-            pass: password,
-            agvaId : `agva${Math.floor(100000 + Math.random() * 900000)}`
+            pass: password
         });
     
         await user.save();
 
         console.log(`Virtual pass = ${user.pass}`);
 
-        createJWT(user._id, 201, `User signed up successfully. Your UID is ${user.agvaId}`, res);
+        createJWT(user._id, 201, "User signed up successfully.", res);
 
        
     } catch (err) {
@@ -65,26 +64,16 @@ exports.signUp = async (req, res) => {
 exports.login = async (req, res) => {
     try {
 
-        const { agvaId, email, password } = req.body;
+        const { email, password } = req.body;
 
-        if (!email && !agvaId) {
-            return res.status(400).json({ status: false, message: 'Please provide atleast your email or AgVa Id.'}); 
-        }
-
-        if (!password) {
-            return res.status(400).json({ status: false, message: 'Please provide your password.'}); 
+        if (!email || !password) {
+            return res.status(400).json({ status: false, message: 'Credentials required.'}); 
         }
 
         var user;
         if (email) {
             user = await User.findOne({ email }).select('+password');    
         }
-        if (agvaId) {
-            user = await User.findOne({ agvaId }).select('+password');    
-        }
-        if (email && agvaId) {
-            user = await User.findOne({ $or: [ {email} , {agvaId}] }).select('+password'); 
-        }        
 
         if (!user || !( user.comparePassword(password, user.password))) {
             return res.status(401).json({ status: false, message: 'Incorrect credentials.'}); 

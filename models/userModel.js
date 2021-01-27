@@ -34,10 +34,6 @@ const userSchema = new mongoose.Schema(
         maxlength: 128, 
         minlength: 6,
         select: false
-    },
-    agvaId : {
-      type: String,
-      trim: true
     }
   },
   schemaOptions
